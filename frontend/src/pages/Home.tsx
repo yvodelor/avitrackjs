@@ -267,7 +267,7 @@ export default function HomePage() {
               <div className="relative mx-auto">
                 <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-emerald-500 to-teal-600 opacity-20 blur-xl"></div>
                 <img
-                  src="https://unsplash.com/fr/photos/brown-hen-on-green-grass-during-daytime-4W8FgDVyUME?auto=format&fit=crop&w=1200&q=80"
+                  src="https://images.unsplash.com/photo-1588597989061-b60ad0eefdbf?q=80&w=869&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dauto=format&fit=crop&w=1200&q=80"
                   alt="Monitoring Avitrack Dashboard"
                   className="relative rounded-2xl shadow-2xl border border-slate-200/50 object-cover w-full h-[320px] sm:h-[420px]"
                 />
