@@ -6,8 +6,10 @@ import path from "path";
 
 const app = express()
 
+const allowedOrigins = process.env.FRONTEND_URLS?.split(',')
+
 app.use(cors({
-  origin: "http://localhost:5173",
+  origin:  process.env.FRONTEND_URL || 'http://localhost:5173',
   credentials: true
 }))
 

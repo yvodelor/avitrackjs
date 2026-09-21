@@ -94,11 +94,10 @@ interface SensorData {
 }
 
 interface AlertResult {
-  type_mesure_id: number;
   valeur: number;
   niveau: "normal" | "warning" | "danger";
   message?: string;
-  alerte?: Alert;
+  alert?: Alert;
 }
 
 /*
@@ -161,8 +160,6 @@ export default function Dashboard() {
   const [poids, setPoids] = useState<number>();
   const [loading, setLoading] = useState(false);
   const [alerts, setAlerts] = useState<AlertResult[]>([]);
-
-
 
 
   /*
@@ -549,9 +546,9 @@ export default function Dashboard() {
       );
 
       console.log("Résultat alertes :", res.data);
-
-
       setAlerts(res.data);
+
+      console.log('alert', alerts)
 
     } catch (error) {
       console.error(
@@ -593,6 +590,7 @@ export default function Dashboard() {
 
       // Dernières valeurs
       const last = formatted[formatted.length - 1];
+      console.log('pml', last)
 
       if (last) {
         setTemperature(last.temperature);
@@ -600,20 +598,24 @@ export default function Dashboard() {
         setAmmoniac(last.ammoniac);
         setPoids(last.poids);
 
-        await loadAlerts(last);
+        await loadAlerts(last); 
 
       }
 
-    } catch (error) {
+      console.log('rtr', alerts)
+
+    } 
+    catch (error) {
       console.error(
         "Erreur chargement mesures :",
         error
       );
-    } finally {
+    } 
+    finally {
       setLoading(false);
     }
 
-    console.log('alerts',  alerts)
+    
 
 
   };
@@ -992,7 +994,7 @@ export default function Dashboard() {
 
             </div>
 
-            <div col-span-12 md:col-span-3>
+            <div className="col-span-12 md:col-span-3  flex justify-end pt-5">
               <button
                 type="button"
                 onClick={loadHistory}
@@ -1124,44 +1126,50 @@ export default function Dashboard() {
           
 
             <div className ="grid grid-cols-1 md:grid-cols-2">
-            <MetricGaugeCard
-              title="Température"
-              metricType="temperature"
-              current={alerts[1].valeur}
-              min={alerts[1].valeur}
-              max={34}
-              gaugeMin={0}
-              gaugeMax={50}
-              unit="°C"
-              message={alerts[1].message}
-            />
+           
+              <MetricGaugeCard
+                title="Température"
+                metricType="temperature"
+                current={temperature ?? 0}
+                min={23}
+                max={34}
+                gaugeMin={0}
+                gaugeMax={50}
+                unit="°C"
+                message={'lok'}
+              />
+          
 
-            <MetricGaugeCard
-              title="Humidité"
-              metricType="humidity"
-              current={74}
-              min={50}
-              max={70}
-              gaugeMin={0}
-              gaugeMax={100}
-              unit="%"
-            />
+           
+              <MetricGaugeCard
+                title="Humidité"
+                metricType="humidity"
+                current={humidity ?? 0}
+                min={50}
+                max={70}
+                gaugeMin={0}
+                gaugeMax={100}
+                unit="%"
+              />
+            
 
-            <MetricGaugeCard
-              title="Poids Moyen"
-              metricType="weight"
-              current={74}
-              min={50}
-              max={70}
-              gaugeMin={0}
-              gaugeMax={5}
-              unit="kg"
-            />
+            
+              <MetricGaugeCard
+                title="Poids Moyen"
+                metricType="weight"
+                current={poids ?? 0}
+                min={50}
+                max={70}
+                gaugeMin={0}
+                gaugeMax={5}
+                unit="kg"
+              />
+          
 
             <MetricGaugeCard
               title="Ammoniac"
               metricType="ammonia"
-              current={74}
+              current={ammoniac ?? 0}
               min={20}
               max={30}
               gaugeMin={0}

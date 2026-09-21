@@ -57,6 +57,7 @@ const validateUpdate = async (data: any) => {
 };
 
 
+
 const getAlertMessages = async (
   req: any,
   res: any
@@ -71,8 +72,7 @@ const getAlertMessages = async (
       });
     }
 
-    const result =
-      await alertService.getAlertMessages(mesures);
+    const result =  await alertService.getAlertMessages(mesures);
 
     return res.json(result);
 
@@ -90,6 +90,36 @@ const getAlertMessages = async (
   }
 };
 
+const getAlertMessage = async (
+  req: any,
+  res: any
+) => {
+  try {
+
+    const { mesures } = req.body;
+
+    const result = await alertService.getAlertMessage(
+      mesures.valeurActu,  
+      mesures.type_mesure_id, 
+      mesures.categorie_id, 
+      mesures.souche_id,
+      mesures.age
+    );
+
+    return res.json(result);
+
+  } catch (error) {
+
+    console.error(
+      "Erreur récupération alertes :",
+      error
+    );
+
+    return res.status(500).json({
+      message: "Erreur lors de la récupération des alertes"
+    });
+  }
+};
 
 export const alertController = {
   ...createBaseController(
@@ -100,5 +130,6 @@ export const alertController = {
     }
   ),
 
-  getAlertMessages
+  getAlertMessages, 
+  getAlertMessage
 };

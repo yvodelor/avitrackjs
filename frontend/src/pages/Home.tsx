@@ -15,7 +15,7 @@ import {
   Bot,
   Activity,
   Layers,
-  ArrowRight
+
 } from "lucide-react";
 import PartnersSection from "@/components/PartenerSection";
 
@@ -95,6 +95,7 @@ export default function HomePage() {
             <div className="flex items-center gap-2">
               <div className="w-10 h-10 rounded-xl bg-emerald-600 flex items-center justify-center text-white shadow-md shadow-emerald-200">
                 <Activity className="w-6 h-6" />
+                <img src = "/logo.jpg" />
               </div>
               <span className="text-2xl font-extrabold tracking-tight text-slate-900">
                 Avi<span className="text-emerald-600">track</span>
@@ -134,7 +135,7 @@ export default function HomePage() {
             <div className="hidden md:flex items-center">
               {userId ? (
                 <Link
-                  to="/Dashboard"
+                  to="/dashboard"
                   className="bg-emerald-600 hover:bg-emerald-700 text-white font-medium px-5 py-2.5 rounded-xl transition duration-200 shadow-sm hover:shadow-md"
                 >
                   Tableau de bord
@@ -230,7 +231,7 @@ export default function HomePage() {
             <div className="flex-1 text-center lg:text-left">
               <span className="inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 border border-emerald-200 px-4 py-1.5 rounded-full text-xs sm:text-sm font-semibold tracking-wide">
                 <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-                Solution IoT & IA pour Aviculture
+                Solution IoT pour Aviculture
               </span>
 
               <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 mt-6 leading-tight tracking-tight">
@@ -267,7 +268,7 @@ export default function HomePage() {
               <div className="relative mx-auto">
                 <div className="absolute -inset-1 rounded-3xl bg-gradient-to-r from-emerald-500 to-teal-600 opacity-20 blur-xl"></div>
                 <img
-                  src="https://images.unsplash.com/photo-1588597989061-b60ad0eefdbf?q=80&w=869&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3Dauto=format&fit=crop&w=1200&q=80"
+                  src="/image.png"
                   alt="Monitoring Avitrack Dashboard"
                   className="relative rounded-2xl shadow-2xl border border-slate-200/50 object-cover w-full h-[320px] sm:h-[420px]"
                 />

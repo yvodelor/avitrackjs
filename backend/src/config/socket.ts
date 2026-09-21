@@ -5,9 +5,11 @@ export let io: Server;
 
 export function initSocket(server: http.Server) {
 
+  const FONTEND_URL = process.env.FRONTEND_URL;
+
   io = new Server(server, {
     cors: {
-      origin: "http://localhost:5173",
+      origin: FONTEND_URL,
     },
   });
 

@@ -118,7 +118,7 @@ export default function DashLayout({ children }: LayoutProps) {
         <div className="flex items-center justify-between h-16 px-6 border-b border-gray-800">
 
           <div className="text-lg text-center font-bold">
-            <a  href= "/">Mon Admin</a>
+            <a  href= "/">Avitrack</a>
           </div>
 
           {/* Close mobile */}

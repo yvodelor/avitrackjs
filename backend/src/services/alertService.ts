@@ -16,6 +16,34 @@ type Alert = {
   message_danger: string | "";
 };
 
+
+type ReponseAlert = {
+  valeur: number;
+  niveau:string
+  alert: Alert;
+  message: string
+}
+
+type typeMesure = [
+  {
+    id: 1,
+    code:'temperatue'
+  },
+  {
+    id: 2,
+    code:'humidity'
+  },
+  {
+    id: 3,
+    code:'ammociac'
+  },
+  {
+    id: 4,
+    code:'poids'
+  }
+]
+
+
 export const alertService = {
   ...createBaseService<Alert>(
     pool,
@@ -29,7 +57,7 @@ export const alertService = {
     categorieId: number,
     soucheId: number | null,
     age: number
-  ) {
+  ) : Promise<ReponseAlert| null>{
     const alertResult = await pool.query(
       `
       SELECT *
@@ -62,18 +90,21 @@ export const alertService = {
         age,
       ]
     );
+    
+    console.log('alert', alertResult.rows)
 
     if (alertResult.rows.length === 0) {
       return null;
     }
 
     const alert = alertResult.rows[0];
+    console.log('al', alert)
 
     const valMin = Number(alert.val_min);
     const valMax = Number(alert.val_max);
     const valLimit = Number(alert.val_limit ?? 0);
 
-    let typeAlertCode = "normal";
+    let niveau = "normal";
     let typeAlertIndice = 0;
     let typeAlertId = 1;
 
@@ -100,7 +131,7 @@ export const alertService = {
       valeurActu < valMin &&
       valeurActu >= valMin - valLimit
     ) {
-      typeAlertCode = "warning";
+      niveau = "warning";
       typeAlertIndice = -1;
       typeAlertId = 2;
       messageAlert = alert.message_warning ?? "";
@@ -113,7 +144,7 @@ export const alertService = {
       (alert.val_min === null || valeurActu >= valMin) &&
       (alert.val_max === null || valeurActu <= valMax)
     ) {
-      typeAlertCode = "normal";
+      niveau = "normal";
       typeAlertIndice = 0;
       typeAlertId = 1;
       messageAlert = alert.message ?? "";
@@ -127,7 +158,7 @@ export const alertService = {
       valeurActu > valMax &&
       valeurActu <= valMax + valLimit
     ) {
-      typeAlertCode = "warning";
+      niveau = "warning";
       typeAlertIndice = 1;
       typeAlertId = 2;
       messageAlert = alert.message_warning ?? "";
@@ -140,47 +171,24 @@ export const alertService = {
       alert.val_max !== null &&
       valeurActu > valMax + valLimit
     ) {
-      typeAlertCode = "danger";
+      niveau = "danger";
       typeAlertIndice = 2;
       typeAlertId = 3;
       messageAlert = alert.message_danger ?? "";
     }
-
-    // ==========================================
-    // TYPE D'ALERTE
-    // ==========================================
-    const typeAlertResult = await pool.query(
-      `
-      SELECT id, code, couleur
-      FROM type_alert
-      WHERE code = $1
-      LIMIT 1
-      `,
-      [typeAlertCode]
-    );
-
-    const typeAlert = typeAlertResult.rows[0] ?? null;
+    console.log('valeur', valeurActu)
+    console.log('message', messageAlert)
 
     return {
       valeur: valeurActu,
-
-      type_mesure_id: typeMesureId,
-
-      alert: {
-        id: alert.id,
-        val_min: alert.val_min,
-        val_max: alert.val_max,
-        val_limit: alert.val_limit,
-      },
-
-      type_alert: typeAlert,
-
-      indice: typeAlertIndice,
-
+      niveau: niveau,
       message: messageAlert,
-    };
+      alert: alert
+    }
+
   },
 
+  
   async getAlertMessages(
     mesures: {
       type_mesure_id: number;
@@ -189,8 +197,8 @@ export const alertService = {
       categorie_id: number;
       age: number;
     }[]
-  ) {
-    const results: Record<string, any> = {};
+  ): Promise<ReponseAlert[]>{
+    const results: ReponseAlert[] = [];
 
     for (const mesure of mesures) {
       const result = await this.getAlertMessage(
@@ -203,9 +211,12 @@ export const alertService = {
         Number(mesure.age)
       );
 
-      results[mesure.type_mesure_id] = result;
+      if( result !== null) results[Number(mesure.type_mesure_id)] = result
     }
-
+    
+     console.log('resultat', results)
     return results;
   },
+
+ 
 };
