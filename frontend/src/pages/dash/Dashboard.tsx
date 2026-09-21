@@ -94,11 +94,13 @@ interface SensorData {
 }
 
 interface AlertResult {
+  type_mesure_id: number;
   valeur: number;
   niveau: "normal" | "warning" | "danger";
   message?: string;
   alert?: Alert;
 }
+
 
 /*
 |--------------------------------------------------------------------------
@@ -109,12 +111,7 @@ interface AlertResult {
 |
 */
 
-const TYPE_MESURE = {
-  TEMPERATURE: 1,
-  HUMIDITE: 2,
-  POIDS: 3,
-  AMMONIAC: 4,
-};
+
 
 export default function Dashboard() {
   /*
@@ -167,6 +164,33 @@ export default function Dashboard() {
   | Chargement des fermes
   |--------------------------------------------------------------------------
   */
+
+
+  const TYPE_MESURE = {
+  TEMPERATURE: 1,
+  HUMIDITE: 2,
+  POIDS: 3,
+  AMMONIAC: 4,
+};
+
+  // Alertes correspondant aux différentes mesures
+  const temperatureAlert = alerts.find(
+    a => a.type_mesure_id === TYPE_MESURE.TEMPERATURE
+  );
+
+  const humidityAlert = alerts.find(
+    a => a.type_mesure_id === TYPE_MESURE.HUMIDITE
+  );
+
+  const poidsAlert = alerts.find(
+    a => a.type_mesure_id === TYPE_MESURE.POIDS
+  );
+
+  const ammoniacAlert = alerts.find(
+    a => a.type_mesure_id === TYPE_MESURE.AMMONIAC
+  );
+
+
 
   useEffect(() => {
     const loadFarms = async () => {
@@ -548,7 +572,7 @@ export default function Dashboard() {
       console.log("Résultat alertes :", res.data);
       setAlerts(res.data);
 
-      console.log('alert', alerts)
+      
 
     } catch (error) {
       console.error(
@@ -1131,12 +1155,12 @@ export default function Dashboard() {
                 title="Température"
                 metricType="temperature"
                 current={temperature ?? 0}
-                min={23}
-                max={34}
+                min={Number(temperatureAlert?.alert?.val_min)}
+                max={Number(temperatureAlert?.alert?.val_max)}
                 gaugeMin={0}
                 gaugeMax={50}
                 unit="°C"
-                message={'lok'}
+                message={temperatureAlert?.message}
               />
           
 
@@ -1145,11 +1169,12 @@ export default function Dashboard() {
                 title="Humidité"
                 metricType="humidity"
                 current={humidity ?? 0}
-                min={50}
-                max={70}
+                min={Number(humidityAlert?.alert?.val_min)}
+                max={Number(humidityAlert?.alert?.val_min)}
                 gaugeMin={0}
                 gaugeMax={100}
                 unit="%"
+                message={humidityAlert?.message}
               />
             
 
@@ -1158,11 +1183,12 @@ export default function Dashboard() {
                 title="Poids Moyen"
                 metricType="weight"
                 current={poids ?? 0}
-                min={50}
-                max={70}
+                min={Number(poidsAlert?.alert?.val_min)}
+                max={Number(poidsAlert?.alert?.val_max)}
                 gaugeMin={0}
                 gaugeMax={5}
                 unit="kg"
+                message={poidsAlert?.message}
               />
           
 
@@ -1170,11 +1196,12 @@ export default function Dashboard() {
               title="Ammoniac"
               metricType="ammonia"
               current={ammoniac ?? 0}
-              min={20}
-              max={30}
+              min={Number(ammoniacAlert?.alert?.val_min)}
+              max={Number(ammoniacAlert?.alert?.val_max)}
               gaugeMin={0}
               gaugeMax={100}
               unit="ppm"
+              message={ammoniacAlert?.message}
             />
 
           </div>

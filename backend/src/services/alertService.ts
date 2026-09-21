@@ -17,32 +17,13 @@ type Alert = {
 };
 
 
-type ReponseAlert = {
+interface ReponseAlert {
+  type_mesure_id: number;
   valeur: number;
-  niveau:string
-  alert: Alert;
-  message: string
+  niveau: "normal" | "warning" | "danger";
+  message?: string;
+  alert?: Alert;
 }
-
-type typeMesure = [
-  {
-    id: 1,
-    code:'temperatue'
-  },
-  {
-    id: 2,
-    code:'humidity'
-  },
-  {
-    id: 3,
-    code:'ammociac'
-  },
-  {
-    id: 4,
-    code:'poids'
-  }
-]
-
 
 export const alertService = {
   ...createBaseService<Alert>(
@@ -51,172 +32,172 @@ export const alertService = {
     ["id"]
   ),
 
-  async getAlertMessage(
-    valeurActu: number,
-    typeMesureId: number,
-    categorieId: number,
-    soucheId: number | null,
-    age: number
-  ) : Promise<ReponseAlert| null>{
-    const alertResult = await pool.query(
-      `
-      SELECT *
-      FROM alert
-      WHERE type_mesure_id = $1
-        AND categorie_id = $2
-        AND (
-          souche_id = $3
-          OR souche_id IS NULL
-        )
-        AND (
-          age_min IS NULL
-          OR $4 >= age_min
-        )
-        AND (
-          age_max IS NULL
-          OR $4 <= age_max
-        )
-      ORDER BY
-        CASE
-          WHEN souche_id = $3 THEN 1
-          ELSE 2
-        END
-      LIMIT 1
-      `,
-      [
-        typeMesureId,
-        categorieId,
-        soucheId,
-        age,
-      ]
-    );
-    
-    console.log('alert', alertResult.rows)
+async getAlertMessage(
+  valeurActu: number,
+  typeMesureId: number,
+  categorieId: number,
+  soucheId: number | null,
+  age: number
+): Promise<ReponseAlert | null> {
 
-    if (alertResult.rows.length === 0) {
-      return null;
-    }
+  const alertResult = await pool.query(
+    `
+    SELECT *
+    FROM alert
+    WHERE type_mesure_id = $1
+      AND categorie_id = $2
+      AND (
+        souche_id = $3
+        OR souche_id IS NULL
+      )
+      AND (
+        age_min IS NULL
+        OR $4 >= age_min
+      )
+      AND (
+        age_max IS NULL
+        OR $4 <= age_max
+      )
+    ORDER BY
+      CASE
+        WHEN souche_id = $3 THEN 1
+        ELSE 2
+      END
+    LIMIT 1
+    `,
+    [
+      typeMesureId,
+      categorieId,
+      soucheId,
+      age,
+    ]
+  );
 
-    const alert = alertResult.rows[0];
-    console.log('al', alert)
+  console.log("alert", alertResult.rows);
 
-    const valMin = Number(alert.val_min);
-    const valMax = Number(alert.val_max);
-    const valLimit = Number(alert.val_limit ?? 0);
+  if (alertResult.rows.length === 0) {
+    return null;
+  }
 
-    let niveau = "normal";
-    let typeAlertIndice = 0;
-    let typeAlertId = 1;
+  const alert = alertResult.rows[0];
 
-    let messageAlert = alert.message ?? "";
+  const valMin =
+    alert.val_min !== null
+      ? Number(alert.val_min)
+      : null;
 
-    // ==========================================
-    // DANGER MINIMUM
-    // ==========================================
-    if (
-      alert.val_min !== null &&
-      valeurActu < valMin - valLimit
-    ) {
-      typeAlertCode = "danger";
-      typeAlertIndice = -2;
-      typeAlertId = 3;
-      messageAlert = alert.message_danger ?? "";
-    }
+  const valMax =
+    alert.val_max !== null
+      ? Number(alert.val_max)
+      : null;
 
-    // ==========================================
-    // WARNING MINIMUM
-    // ==========================================
-    else if (
-      alert.val_min !== null &&
-      valeurActu < valMin &&
-      valeurActu >= valMin - valLimit
-    ) {
-      niveau = "warning";
-      typeAlertIndice = -1;
-      typeAlertId = 2;
-      messageAlert = alert.message_warning ?? "";
-    }
+  const valLimit = Number(alert.val_limit ?? 0);
 
-    // ==========================================
-    // NORMAL
-    // ==========================================
-    else if (
-      (alert.val_min === null || valeurActu >= valMin) &&
-      (alert.val_max === null || valeurActu <= valMax)
-    ) {
-      niveau = "normal";
-      typeAlertIndice = 0;
-      typeAlertId = 1;
-      messageAlert = alert.message ?? "";
-    }
+  let niveau: "normal" | "warning" | "danger" = "normal";
+  let messageAlert = alert.message ?? "";
 
-    // ==========================================
-    // WARNING MAXIMUM
-    // ==========================================
-    else if (
-      alert.val_max !== null &&
-      valeurActu > valMax &&
-      valeurActu <= valMax + valLimit
-    ) {
-      niveau = "warning";
-      typeAlertIndice = 1;
-      typeAlertId = 2;
-      messageAlert = alert.message_warning ?? "";
-    }
+  // ==========================================
+  // DANGER MINIMUM
+  // ==========================================
+  if (
+    valMin !== null &&
+    valeurActu < valMin - valLimit
+  ) {
+    niveau = "danger";
+    messageAlert = alert.message_danger ?? "";
+  }
 
-    // ==========================================
-    // DANGER MAXIMUM
-    // ==========================================
-    else if (
-      alert.val_max !== null &&
-      valeurActu > valMax + valLimit
-    ) {
-      niveau = "danger";
-      typeAlertIndice = 2;
-      typeAlertId = 3;
-      messageAlert = alert.message_danger ?? "";
-    }
-    console.log('valeur', valeurActu)
-    console.log('message', messageAlert)
+  // ==========================================
+  // WARNING MINIMUM
+  // ==========================================
+  else if (
+    valMin !== null &&
+    valeurActu < valMin &&
+    valeurActu >= valMin - valLimit
+  ) {
+    niveau = "warning";
+    messageAlert = alert.message_warning ?? "";
+  }
 
-    return {
-      valeur: valeurActu,
-      niveau: niveau,
-      message: messageAlert,
-      alert: alert
-    }
+  // ==========================================
+  // NORMAL
+  // ==========================================
+  else if (
+    (valMin === null || valeurActu >= valMin) &&
+    (valMax === null || valeurActu <= valMax)
+  ) {
+    niveau = "normal";
+    messageAlert = alert.message ?? "";
+  }
 
-  },
+  // ==========================================
+  // WARNING MAXIMUM
+  // ==========================================
+  else if (
+    valMax !== null &&
+    valeurActu > valMax &&
+    valeurActu <= valMax + valLimit
+  ) {
+    niveau = "warning";
+    messageAlert = alert.message_warning ?? "";
+  }
+
+  // ==========================================
+  // DANGER MAXIMUM
+  // ==========================================
+  else if (
+    valMax !== null &&
+    valeurActu > valMax + valLimit
+  ) {
+    niveau = "danger";
+    messageAlert = alert.message_danger ?? "";
+  }
+
+  console.log("valeur :", valeurActu);
+  console.log("niveau :", niveau);
+  console.log("message :", messageAlert);
+
+  return {
+    type_mesure_id: typeMesureId,
+    valeur: valeurActu,
+    niveau,
+    message: messageAlert,
+    alert,
+  };
+},
 
   
-  async getAlertMessages(
-    mesures: {
-      type_mesure_id: number;
-      valeur: number;
-      souche_id?: number | null;
-      categorie_id: number;
-      age: number;
-    }[]
-  ): Promise<ReponseAlert[]>{
-    const results: ReponseAlert[] = [];
+async getAlertMessages(
+  mesures: {
+    type_mesure_id: number;
+    valeur: number;
+    souche_id?: number | null;
+    categorie_id: number;
+    age: number;
+  }[]
+): Promise<ReponseAlert[]> {
 
-    for (const mesure of mesures) {
-      const result = await this.getAlertMessage(
-        Number(mesure.valeur),
-        Number(mesure.type_mesure_id),
-        Number(mesure.categorie_id),
-        mesure.souche_id
-          ? Number(mesure.souche_id)
-          : null,
-        Number(mesure.age)
-      );
+  const results: ReponseAlert[] = [];
 
-      if( result !== null) results[Number(mesure.type_mesure_id)] = result
+  for (const mesure of mesures) {
+    const result = await this.getAlertMessage(
+      Number(mesure.valeur),
+      Number(mesure.type_mesure_id),
+      Number(mesure.categorie_id),
+      mesure.souche_id != null
+        ? Number(mesure.souche_id)
+        : null,
+      Number(mesure.age)
+    );
+
+    if (result !== null) {
+      results.push(result);
     }
-    
-     console.log('resultat', results)
-    return results;
-  },
+  }
 
+  console.log("résultat :", results);
+
+  return results;
+}
  
 };
