@@ -1170,7 +1170,7 @@ export default function Dashboard() {
                 metricType="humidity"
                 current={humidity ?? 0}
                 min={Number(humidityAlert?.alert?.val_min)}
-                max={Number(humidityAlert?.alert?.val_min)}
+                max={Number(humidityAlert?.alert?.val_max)}
                 gaugeMin={0}
                 gaugeMax={100}
                 unit="%"

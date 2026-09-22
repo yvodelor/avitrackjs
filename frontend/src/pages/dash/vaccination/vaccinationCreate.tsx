@@ -155,14 +155,14 @@ export default function VaccinationCreate() {
   return (
     <DashLayout>
       <PageMeta
-        title={isEdit ? "Modifier un batiment " : " Ajouter un batiment"} 
+        title={isEdit ? "Modifier Vaccination " : " Ajouter Vaccination"} 
        
-        description="Votre ferme"
+        description="Vos Vaccinations"
       />
-      <PageBreadcrumb pageTitle="Batinment" />
+      <PageBreadcrumb pageTitle="Vaccination" />
 
       <ComponentCard  
-        title= "Batiment"
+        title= "Vaccination"
         desc = {isEdit ? "Modifier" : "Créer"}
       >  
 

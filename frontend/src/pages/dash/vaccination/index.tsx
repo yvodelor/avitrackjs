@@ -108,18 +108,19 @@ useEffect(() => {
       
       <PageMeta
         title="Liste des Vaccination"
-        description="This is React.js Form Elements  Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        description="Vaccination"
       />
-      <PageBreadcrumb pageTitle="Agent IA" />
+      <PageBreadcrumb pageTitle="Vaccination" />
 
       <ComponentCard  
-        title="Base de connaisance"
-        desc = "Ajouter une Question"
+        title="Vaccination"
+        desc = "Vaccination"
       >
         <div>
           <DynamicTable 
             data={elts} 
             columns={ EltCols }
+            linkButton="/vaccination"
             actions={(elt) => (
               
               <div className="flex gap-1 justify-end">

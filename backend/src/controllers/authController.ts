@@ -87,11 +87,11 @@ export const login = async (req: Request, res: Response) => {
 
 
 export const register = async (req: Request, res: Response) => {
-  const {name, email, password, password2 } = req.body;
-  console.log(pool)
+  const {name, email, password, password2, role } = req.body;
+ 
   try{
     const existingUser = await pool.query("SELECT * FROM users WHERE email = $1", [email]);
-    console.log(req.body)
+   
     if (existingUser.rows.length > 0) {
       return res.status(401).json({ 
         success: false,
@@ -111,8 +111,8 @@ export const register = async (req: Request, res: Response) => {
    
 
     const hashedPassword = await bcrypt.hash(password, 10);  console.log('mdp', hashedPassword)
-    const newUser = await pool.query(" INSERT INTO users (name, email, password ) VALUES($1, $2, $3) RETURNING id",
-       [name, email, hashedPassword]
+    const newUser = await pool.query(" INSERT INTO users (name, email, password, role ) VALUES($1, $2, $3, $4) RETURNING id",
+       [name, email, hashedPassword, role]
     );
 
     const token = jwt.sign({

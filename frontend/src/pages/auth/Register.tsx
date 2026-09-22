@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Input from "../../components/form/input/InputField";
 import Checkbox from "../../components/form/input/Checkbox";
 import { registerApi } from "../../api/auth.api";
+import Radio from "@/components/form/input/Radio";
 
 export default function Register() {
   const [name, setName] = useState("");
@@ -13,6 +14,8 @@ export default function Register() {
 
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
+
+  const [role, setRole] = useState("");
 
   const navigate = useNavigate();
 
@@ -25,6 +28,7 @@ export default function Register() {
         email,
         password,
         password2,
+        role
       });
 
       setError(null);
@@ -107,6 +111,11 @@ export default function Register() {
             value={password2}
             onChange={(e) => setPassword2(e.target.value)}
           />
+
+          {/* Role */}
+          <label>Je suis</label>
+          <Radio id="farmer" name="role" value="fermier" label="Fermier" checked={role === "fermier"} onChange={setRole} />
+          <Radio id="veterinarian" name="role" value="veterinaire" label="Vétérinaire" checked={role === "veterinaire"} onChange={setRole} />
 
           {/* Checkbox */}
           <Checkbox

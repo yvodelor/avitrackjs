@@ -140,14 +140,14 @@ const  EltCols:  Column<Building>[] = [
     <DashLayout>
       
       <PageMeta
-        title="Liste des Agents IA"
-        description="This is React.js Form Elements  Dashboard page for TailAdmin - React.js Tailwind CSS Admin Dashboard Template"
+        title="Tous les Bâtiments"
+        description="Tous les Bâtiments"
       />
-      <PageBreadcrumb pageTitle="Agent IA" />
+      <PageBreadcrumb pageTitle="Bâtiments" />
 
       <ComponentCard  
-        title="Base de connaisance"
-        desc = "Ajouter une Question"
+        title="Bâtiments"
+        desc = "Tous les Bâtiments par ferme"
       >
         <div>
  

@@ -159,49 +159,7 @@ export default function deviceCreate() {
       />
       <PageBreadcrumb pageTitle="Add Device" />
 
-      <div className="my-2">
-        <ComponentCard 
-          title= "Recherche du batiment"
-          desc = "Rechercher à partir de chaque élement"
-        >  
-          <div>   
-            <div className="grid grid-cols-12 gap-4">
-              <div className="col-span-12 md:col-span-6">
-                <Label htmlFor="pays_id"> Pays  </Label>
-                <Select
-                  name="pays_id"               
-                  options = {optionFarm}
-                  placeholder = "Select un pays"
-                  onChange={handleSelectFarm}
-                  defaultValue= { isEdit ? ''  : ""}
-                />
-              </div>
-       
-              <div className="col-span-12 md:col-span-6">
-                <Label htmlFor="user_id"> Fermier *  </Label>
-                <Select
-                  name="building_id"               
-                  options = {optionBuildings}
-                  placeholder = "Select un batiment"
-                  onChange={handleSelectBuilding}
-                  defaultValue= { isEdit ? String(form.building_id)  : ""}
-                />
-              </div>
-              <div className="col-span-12 md:col-span-6">
-                <Label htmlFor="farm_id"> Ferme *  </Label>
-                <Select
-                  name="building_id"               
-                  options = {optionBuildings}
-                  placeholder = "Select ue ferme"
-                  onChange={handleSelectBuilding}
-                  defaultValue= { isEdit ? ''  : ""}
-                />
-              </div>
 
-            </div>
-          </div>           
-        </ComponentCard>
-      </div>
 
       <div className="my-2">
         <ComponentCard  
@@ -235,7 +193,29 @@ export default function deviceCreate() {
             
             <div className="grid grid-cols-12 gap-4">
 
-              <div className="col-span-12 md:col-span-4">
+              <div className="col-span-6 md:col-span-6">
+                <Label > Fermier  </Label>
+                <Select
+                  name="user_id"               
+                  options = {optionFarm}
+                  placeholder = "Select un pays"
+                  onChange={handleSelectFarm}
+                  defaultValue= { isEdit ? ''  : ""}
+                />
+              </div>
+
+              <div className="col-span-6 md:col-span-6">
+                <Label > Ferme  </Label>
+                <Select
+                  name="ferme_id"               
+                  options = {optionFarm}
+                  placeholder = "Select un pays"
+                  onChange={handleSelectFarm}
+                  defaultValue= { isEdit ? ''  : ""}
+                />
+              </div>
+
+              <div className="col-span-12 md:col-span-6">
                 <Label htmlFor="farm_id"> Batiment *  </Label>
                 <Select
                   name="building_id"               
@@ -250,10 +230,8 @@ export default function deviceCreate() {
                   </small>
                 )}
               </div>
-
-
-              
-              <div className="col-span-12 md:col-span-4">
+             
+              <div className="col-span-12 md:col-span-6">
                 <Label htmlFor="name">Code du Matériel *</Label>
                 <Inputfield
                   name="code"

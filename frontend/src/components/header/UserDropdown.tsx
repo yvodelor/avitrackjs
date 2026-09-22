@@ -31,7 +31,7 @@ export default function UserDropdown() {
           <img src={ avatar } alt="User" />
         </span>
 
-        <span className="block mr-1 font-medium text-theme-sm">{userId}</span>
+        <span className="block mr-1 font-medium text-theme-sm"></span>
         <svg
           className={`stroke-gray-500 dark:stroke-gray-400 transition-transform duration-200 ${
             isOpen ? "rotate-180" : ""

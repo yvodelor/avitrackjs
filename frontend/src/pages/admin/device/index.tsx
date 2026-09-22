@@ -108,25 +108,20 @@ const DevicePage = () => {
         desc = "Installation"
       >
         <div>
-          <div>
-            <div className="flex justify-end">
-              <Button size="sm" variant="primary" className="bg-gray-600">
-                <a href = "/admin/device">Ajouter Device</a>
-              </Button>
-            </div>
-          </div>
+          
           <DynamicTable 
             data={elts} 
             columns={ EltCols }
+            linkButton="/admin/device"
             actions={(elt) => (
               
               <div className="flex gap-1 justify-end">
                 <Button  size="sm" variant="primary" className="bg-green-600 px-0 py-0">
-                  <Link to = {`/device/${elt.id}`}><Edit  size="15"/></Link>
+                  <Link to = {`/admin/device/${elt.id}`}><Edit  size="15"/></Link>
                 </Button> 
                 
                 <Button  size ="sm" variant="primary"  className="bg-blue-600 px-2">
-                  <Link to = {`/device/${elt.id}`}><BookOpen  size="15"/></Link>
+                  <Link to = {`/admin/device/${elt.id}`}><BookOpen  size="15"/></Link>
                 </Button>
               </div>
             )}

@@ -163,11 +163,11 @@ export default function BuildingCreate() {
        
         description="Batiment"
       />
-      <PageBreadcrumb pageTitle="Batinment" />
+      <PageBreadcrumb pageTitle="Bâtiment" />
 
       <ComponentCard  
         title= "Batiment"
-        desc = {isEdit ? "Modifier" : "Créer"}
+        desc = {isEdit ? "Modifier" : "Ajouter un Bâtiment"}
       >  
 
         {error && (
@@ -200,7 +200,7 @@ export default function BuildingCreate() {
               <Label htmlFor="name">Nom *</Label>
               <Inputfield
                 name="name"
-                placeholder="Nom de la ferme"
+                placeholder="Nom du Bâtiment"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
               />
@@ -229,7 +229,7 @@ export default function BuildingCreate() {
             </div>
 
             <div className="col-span-12 md:col-span-4">
-              <Label htmlFor="farm_id"> Souche *  </Label>
+              <Label htmlFor="souche_id_id"> Souche *  </Label>
               <Select
                 name="souche_id"
                 options = {optionSouche}
