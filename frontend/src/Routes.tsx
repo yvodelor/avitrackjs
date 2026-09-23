@@ -53,8 +53,10 @@ const AlertCreate = lazy(() => import("./pages/admin/alert/alertCreate"));
 const VaccinCreate = lazy(() => import("./pages/admin/vaccin/VaccinCreate")
 );
 
+/* VeteBoard */
+const VeteBoard = lazy(() => import("./pages/vete/VeteBoard"));
 
-/* Vaccin */
+/* Intervention */
 const InterventionPage = lazy(() => import("./pages/vete/intervention/"));
 const InterventionCreate = lazy(() => import("./pages/vete/intervention/interventionCreate"));
 
@@ -260,9 +262,17 @@ const appRoutes: AppRoute[] = [
   },
 
 
+  // =========================
+  // VeteBoard
+  // =========================
+  {
+    path: "/veterinaire/dashboard",
+    element: <VeteBoard />,
+    protected: true,
+  },
   
   // =========================
-  // Vaccin
+  // Intervention
   // =========================
   {
     path: "/interventions",

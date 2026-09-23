@@ -33,11 +33,15 @@ export default function Login() {
       });
 
       const data = response.data;
+
+      console.log('donne', data)
       
       // 👉 action après succès
       setTimeout(() => {
-        navigate("/dashboard");
-      }, 1000);
+        if(data.user.role === 'veterinaire') navigate("/veterinaire/dashboard");
+        else if(data.user.role === 'admin') navigate("/admin/dashboard");
+        else navigate("/dashboard");
+      }, 10);
 
       //Enregistrement du Token
       localStorage.setItem("token", data.token)

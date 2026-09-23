@@ -70,6 +70,8 @@ export const login = async (req: Request, res: Response) => {
       token,
       user: {
         sub: user.id,
+        role: user.role,
+        niveau: user.niveau
         
       }
     })

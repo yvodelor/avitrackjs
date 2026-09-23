@@ -12,7 +12,7 @@ import avatar from "../../assets/avatar.jpg"
 export default function UserDropdown() {
   const [isOpen, setIsOpen] = useState(false);
 
-  const { userId, email, name} = useAuth();
+  const { email, name} = useAuth();
 
   function toggleDropdown() {
     setIsOpen(!isOpen);
