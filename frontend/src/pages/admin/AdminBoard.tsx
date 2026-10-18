@@ -1,19 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
+
 import AdminLayout from "@/layouts/AdminLayout";
-import { socket } from "@/services/socket";
-import axiosClient from "@/api/axiosClient";
-import ReactECharts from "echarts-for-react";
 
-//import React from 'react';
-import { MetricGaugeCard } from '@/components/MetricGaugeCard';
 
-import { type Building, buildingApi } from "@/api/building.api";
-import { type Farm, farmApi } from "@/api/farm.api";
-import { type Device, deviceApi } from "@/api/device.api";
-import {type Souche,  soucheApi } from "@/api/souche.api";
-
-import Select from "@/components/form/Select";
-import Label from "@/components/form/Label";
 
 
 

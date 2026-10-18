@@ -25,7 +25,7 @@ import {Edit,  BookOpen} from 'lucide-react'
 
 const VillePage = () => {
   const [elts, setElts] = useState<Ville[]>([]);
-    const [pays, setPays] = useState<Pays[]>([]);
+    const [, setPays] = useState<Pays[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
