@@ -10,7 +10,7 @@ import { type TypeMesure, typeMesureApi } from "@/api/typeMesure.api";
 import PageMeta from "@/components/common/PageMeta";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 
-import DashLayout from "@/layouts/DashLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 import { DynamicTable} from "@/components/tables/DynamicTable";
 import type{ Column } from "@/components/tables/DynamicTable";
 import  Button  from "@/components/button/Button";
@@ -168,7 +168,7 @@ const AlertPage = () => {
      UI
   ========================= */
   return (
-    <DashLayout>
+    <AdminLayout>
       
       <PageMeta
         title="Liste des Agents IA"
@@ -205,7 +205,7 @@ const AlertPage = () => {
           </DynamicTable>
         </div>
       </ComponentCard>
-    </DashLayout>
+    </AdminLayout>
   );
 };
 

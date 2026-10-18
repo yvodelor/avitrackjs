@@ -34,9 +34,12 @@ const VaccinationCreate = lazy(() =>
 
 /* Support */
 const SupportPage = lazy(() => import("./pages/dash/support/"));
-const SupportCreate = lazy(() =>
-  import("./pages/dash/support/supportCreate")
-);
+const SupportCreate = lazy(() => import("./pages/dash/support/supportCreate") );
+
+
+
+/* AdminBoard */
+const AdminBoard = lazy(() => import("./pages/admin/AdminBoard"));
 
 /* Device */
 const DevicePage = lazy(() => import("./pages/admin/device/"));
@@ -52,6 +55,19 @@ const AlertCreate = lazy(() => import("./pages/admin/alert/alertCreate"));
 const VaccinPage = lazy(() => import("./pages/admin/vaccin/"));
 const VaccinCreate = lazy(() => import("./pages/admin/vaccin/VaccinCreate")
 );
+
+/* Pays */
+const PaysPage = lazy(() => import("./pages/admin/pays/"));
+const PaysCreate = lazy(() => import("./pages/admin/pays/")
+);
+
+/* Ville */
+const VillePage = lazy(() => import("./pages/admin/ville/"));
+const VilleCreate = lazy(() => import("./pages/admin/ville/villeCreate")
+);
+
+
+
 
 /* VeteBoard */
 const VeteBoard = lazy(() => import("./pages/vete/VeteBoard"));
@@ -205,6 +221,24 @@ const appRoutes: AppRoute[] = [
   },
 
   // =========================
+  // Dashboard Admin
+  // =========================
+  {
+    path: "/admin/",
+    element: <AdminBoard />,
+    protected: true,
+  },
+
+  // =========================
+  // Fermes Admin
+  // =========================
+  {
+    path: "/admin/farms",
+    element: <FarmPage />,
+    protected: true,
+  },
+
+  // =========================
   // Device
   // =========================
   {
@@ -260,6 +294,141 @@ const appRoutes: AppRoute[] = [
     element: <VaccinCreate />,
     protected: true,
   },
+
+  // =========================
+  //  Pays
+  // =========================
+  {
+    path: "/admin/payss",
+    element: <PaysPage />,
+    protected: true,
+  },
+
+  {
+    path: "/admin/pays",
+    element: <PaysCreate />,
+    protected: true,
+  },
+  {
+    path: "/admin/pays/:id",
+    element: <PaysCreate />,
+    protected: true,
+  },
+
+  // =========================
+  // ville
+  // =========================
+  {
+    path: "/admin/villes",
+    element: <VillePage />,
+    protected: true,
+  },
+
+  {
+    path: "/admin/ville",
+    element: <VilleCreate />,
+    protected: true,
+  },
+  {
+    path: "/admin/ville/:id",
+    element: <VilleCreate />,
+    protected: true,
+  },
+
+
+
+
+
+
+
+  // =========================
+  // Farm
+  // =========================
+  {
+    path: "/admin/farms",
+    element: <FarmPage />,
+    protected: true,
+  },
+  {
+    path: "/admin/farm",
+    element: <FarmCreate />,
+    protected: true,
+  },
+  {
+    path: "/admin/farm/:id",
+    element: <FarmCreate />,
+    protected: true,
+  },
+
+
+  // =========================
+  // Support
+  // =========================
+  {
+    path: "/admin/supports",
+    element: <SupportPage />,
+    protected: true,
+  },
+  {
+    path: "/admin/support",
+    element: <SupportCreate />,
+    protected: true,
+  },
+  {
+    path: "/admin/support/:id",
+    element: <SupportCreate />,
+    protected: true,
+  },
+
+
+  // =========================
+  // Building
+  // =========================
+  {
+    path: "/admin/buildings",
+    element: <BuildingPage />,
+    protected: true,
+  },
+  {
+    path: "/admin/building",
+    element: <BuildingCreate />,
+    protected: true,
+  },
+  {
+    path: "/admin/building/:id",
+    element: <BuildingCreate />,
+    protected: true,
+  },
+
+  // =========================
+  // Vaccination
+  // =========================
+  {
+    path: "/admin/vaccinations",
+    element: <VaccinationPage />,
+    protected: true,
+  },
+  {
+    path: "/admin/vaccination",
+    element: <VaccinationCreate />,
+    protected: true,
+  },
+  {
+    path: "/admin/vaccination/:id",
+    element: <VaccinationCreate />,
+    protected: true,
+  },
+
+
+
+
+
+
+
+
+
+
+
 
 
   // =========================

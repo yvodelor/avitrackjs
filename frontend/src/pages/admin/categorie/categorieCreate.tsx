@@ -7,7 +7,7 @@ import {type  Categorie, categorieApi } from "@/api/categorie.api";
 import PageMeta from "@/components/common/PageMeta";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 
-import DashLayout from "@/layouts/DashLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 import { DynamicTable} from "@/components/tables/DynamicTable";
 import type{ Column } from "@/components/tables/DynamicTable";
 import  Button  from "@/components/button/Button";
@@ -76,7 +76,7 @@ const CategoriePage = () => {
      UI
   ========================= */
   return (
-    <DashLayout>
+    <AdminLayout>
       
       <PageMeta
         title="Device"
@@ -134,7 +134,7 @@ const CategoriePage = () => {
           </DynamicTable>
         </div>
       </ComponentCard>
-    </DashLayout>
+    </AdminLayout>
   );
 };
 

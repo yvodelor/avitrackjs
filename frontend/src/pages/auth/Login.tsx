@@ -34,7 +34,7 @@ export default function Login() {
 
       const data = response.data;
 
-      console.log('donne', data)
+      
       
       // 👉 action après succès
       setTimeout(() => {

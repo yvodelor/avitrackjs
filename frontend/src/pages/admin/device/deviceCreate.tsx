@@ -7,7 +7,7 @@ import {type  Farm, farmApi } from "@/api/farm.api";
 import {type  Building, buildingApi } from "@/api/building.api";
 import {type  Device, deviceApi } from "@/api/device.api";
 
-import DashLayout from "@/layouts/DashLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 
 import PageMeta from "@/components/common/PageMeta";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -151,7 +151,7 @@ export default function deviceCreate() {
   };
 
   return (
-    <DashLayout>
+    <AdminLayout>
       <PageMeta
         title={isEdit ? "Modifier un batiment " : " Ajouter un batiment"} 
        
@@ -277,7 +277,7 @@ export default function deviceCreate() {
           </form>        
         </ComponentCard>
       </div>
-    </DashLayout>
+    </AdminLayout>
   );
 }
      

@@ -6,7 +6,7 @@ import {type  Souche, soucheApi } from "@/api/souche.api";
 
 import {type  TypeMesure, typeMesureApi } from "@/api/typeMesure.api";
 
-import DashLayout from "@/layouts/DashLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 
 import PageMeta from "@/components/common/PageMeta";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -63,14 +63,14 @@ export default function AlertCreate() {
     }));   
 
     soucheApi.getAll().then(data => {
-      console.log(data)
+    
       if(data !== null ) setSouches(data)
     })
   };
 
   useEffect(() => {
     categorieApi.getAll().then(data => {
-      console.log(data)
+      
       if(data !== null) setCategories(data)
     })  
   }, []);
@@ -208,7 +208,7 @@ export default function AlertCreate() {
   };
 
   return (
-    <DashLayout>
+    <AdminLayout>
       <PageMeta
         title={isEdit ? "Modifier un batiment " : " Ajouter un batiment"} 
        
@@ -424,7 +424,7 @@ export default function AlertCreate() {
         </form>        
       </ComponentCard>
       
-    </DashLayout>
+    </AdminLayout>
   );
 }
      

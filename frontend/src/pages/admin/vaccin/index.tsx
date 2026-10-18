@@ -10,7 +10,7 @@ import { type Souche, soucheApi } from "@/api/souche.api";
 import PageMeta from "@/components/common/PageMeta";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
 
-import DashLayout from "@/layouts/DashLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 import { DynamicTable} from "@/components/tables/DynamicTable";
 import type{ Column } from "@/components/tables/DynamicTable";
 import  Button  from "@/components/button/Button";
@@ -140,7 +140,7 @@ const VaccinPage = () => {
      UI
   ========================= */
   return (
-    <DashLayout>
+    <AdminLayout>
       
       <PageMeta
         title="Liste des Agents IA"
@@ -169,6 +169,7 @@ const VaccinPage = () => {
                 <Button  size ="sm" variant="primary"  className="bg-blue-600 px-2">
                   <Link to = {`/admin/vaccin/${elt.id}`}><BookOpen  size="15"/></Link>
                 </Button>
+                
               </div>
             )}
               
@@ -177,7 +178,7 @@ const VaccinPage = () => {
           </DynamicTable>
         </div>
       </ComponentCard>
-    </DashLayout>
+    </AdminLayout>
   );
 };
 

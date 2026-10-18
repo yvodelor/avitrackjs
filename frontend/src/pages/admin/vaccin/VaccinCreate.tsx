@@ -5,7 +5,7 @@ import {type  Categorie, categorieApi } from "@/api/categorie.api";
 //import {type  Souche, soucheApi } from "@/api/souche.api";
 import {type  Vaccin, vaccinApi } from "@/api/vaccin.api";
 
-import DashLayout from "@/layouts/DashLayout";
+import AdminLayout from "@/layouts/AdminLayout";
 
 import PageMeta from "@/components/common/PageMeta";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -149,7 +149,7 @@ export default function VaccinCreate() {
   };
 
   return (
-    <DashLayout>
+    <AdminLayout>
       <PageMeta
         title={isEdit ? "Modifier un batiment " : " Ajouter un batiment"} 
        
@@ -283,7 +283,7 @@ export default function VaccinCreate() {
         </form>        
       </ComponentCard>
       
-    </DashLayout>
+    </AdminLayout>
   );
 }
 

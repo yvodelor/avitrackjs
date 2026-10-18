@@ -4,6 +4,7 @@ import { socket } from "@/services/socket";
 import axiosClient from "@/api/axiosClient";
 import ReactECharts from "echarts-for-react";
 
+
 //import React from 'react';
 import { MetricGaugeCard } from '@/components/MetricGaugeCard';
 
@@ -20,6 +21,7 @@ import Label from "@/components/form/Label";
 | Mesure retournée par le backend
 |--------------------------------------------------------------------------
 */
+
 
 interface Mesure {
   id: number;
