@@ -58,7 +58,7 @@ const VaccinCreate = lazy(() => import("./pages/admin/vaccin/VaccinCreate")
 
 /* Pays */
 const PaysPage = lazy(() => import("./pages/admin/pays/"));
-const PaysCreate = lazy(() => import("./pages/admin/pays/")
+const PaysCreate = lazy(() => import("./pages/admin/pays/PaysCreate")
 );
 
 /* Ville */
