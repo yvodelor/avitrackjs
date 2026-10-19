@@ -1,21 +1,44 @@
 import { Request, Response, NextFunction } from "express";
 
-export const roleMiddleware = (minLevel: number) => {
+export const roleMiddleware = (minLevel?: number) => {
   return (req: Request, res: Response, next: NextFunction) => {
-    const user = req.user as any;
+    const user = req.user;
 
     if (!user) {
-      return res.status(401).json({ message: "Non authentifié" });
-    }
-
-    const userLevel = user.role; // ton champ int
-
-    if (userLevel < minLevel) {
-      return res.status(403).json({
-        message: "Accès refusé : niveau insuffisant",
+      return res.status(401).json({
+        message: "Non authentifié",
       });
     }
 
-    next();
+    // Vérifier que le compte est actif.
+    if (user.actif !== true) {
+      return res.status(403).json({
+        message: "Compte désactivé",
+      });
+    }
+
+    // Seuls les administrateurs accèdent aux routes Admin.
+    if (user.role !== "admin") {
+      return res.status(403).json({
+        message: "Accès réservé aux administrateurs",
+      });
+    }
+
+    // Vérification du niveau administratif si nécessaire.
+    if (minLevel !== undefined) {
+      const niveau = user.niveau_id;
+
+      if (
+        niveau == null ||
+        !Number.isInteger(Number(niveau)) ||
+        Number(niveau) < minLevel
+      ) {
+        return res.status(403).json({
+          message: "Niveau administratif insuffisant",
+        });
+      }
+    }
+
+    return next();
   };
 };

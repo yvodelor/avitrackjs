@@ -22,7 +22,7 @@ export const  createBaseController = <T extends { id: number}>(
 
 ) => {
 
-    const getContext = (req: Request, enableAccess = true): QueryContext => {
+    const getContext = (req: Request, enableAccess= true): QueryContext => {
   
         return {
             user: req.user,

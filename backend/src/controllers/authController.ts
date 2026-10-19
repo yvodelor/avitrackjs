@@ -35,6 +35,7 @@ export const login = async (req: Request, res: Response) => {
     )
 
     const user = result.rows[0]
+    
 
     if (!user) {
       return res.status(401).json({
@@ -58,7 +59,7 @@ export const login = async (req: Request, res: Response) => {
     // 3. JWT
     const token = jwt.sign(
       {
-        sub: user.id, email
+        sub: user.id, email: user.email, role: user.role
       },
       process.env.JWT_SECRET as string,
       { expiresIn: "90d" }

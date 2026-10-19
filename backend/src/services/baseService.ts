@@ -20,7 +20,7 @@ export const createBaseService = <T extends BaseEntity>(
         startIndex = 1
     ) => {
 
-         console.log('context', context?.user?.role)
+       
 
         if (!context?.enableAccess) {
             return {
@@ -30,6 +30,13 @@ export const createBaseService = <T extends BaseEntity>(
             };
         }
        
+        if (context?.user?.role == 'admin') {
+            return {
+                joins: "",
+                where: "",
+                values: []
+            };
+        }
         
         if(mode == 'admin' || mode == 'auth'){
             if (!context.userId) {
@@ -53,14 +60,17 @@ export const createBaseService = <T extends BaseEntity>(
         };
     };
 
+   
+
+
     const checkAccess = async (
         id: number,
         context?: QueryContext
     ) => {
 
-        const accessQuery =
-            buildAccessQuery(context, 2);
+        const accessQuery =  buildAccessQuery(context, 2);
 
+        
         const values = [
             id,
             ...accessQuery.values

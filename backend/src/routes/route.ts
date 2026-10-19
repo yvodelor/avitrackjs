@@ -23,21 +23,22 @@ import typeMesureRoute from './typeMesureRoute'
 import supportRoute from './supportRoute'
 import interventionRoute from './interventionRoute'
 
+
+
 import { mesureController } from '../controllers/mesureController'
 import { alertController } from '../controllers/alertController'
 
+import { adminController } from "../controllers/adminController";
+
+
+
+
+
 const router = Router()
 
-router.get(
-  "/mesures/device/:deviceCode",
-  mesureController.getByDevice
-);
-
-router.post(
-  "/alert/messages",
-  alertController.getAlertMessages
-);
-
+router.get( "/mesures/device/:deviceCode",  mesureController.getByDevice );
+router.post( "/alert/messages", alertController.getAlertMessages );
+router.get( "/admin",  adminController );
 
 router.use('/pays', paysRoute )
 router.use('/ville', villeRoute )
@@ -63,7 +64,7 @@ router.use('/vaccination', vaccinationRoute)
 router.use('/vaccin', vaccinRoute)
 router.use('/farm', farmRoute)
 router.use('/device', deviceRoute)
-router.use('/building', buildingRoute)
+router.use('/building', buildingRoute) 
 
 
 

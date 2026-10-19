@@ -64,6 +64,7 @@ const PaysCreate = lazy(() => import("./pages/admin/pays/PaysCreate")
 /* Ville */
 const VillePage = lazy(() => import("./pages/admin/ville/"));
 const VilleCreate = lazy(() => import("./pages/admin/ville/VilleCreate")
+import VilleCreate from "./pages/admin/ville/VilleCreate";
 );
 
 

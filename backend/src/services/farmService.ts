@@ -11,8 +11,11 @@ type Farm = {
 
 export const farmService = {
     ...createBaseService<Farm>(
-        pool, 'farms', ['id', 'name', 'pays_id'],
-        { field: "user_id"}
+        pool, 
+        'farms', 
+        ['id', 'name', 'pays_id'],
+        { field: "user_id"}, 
+        'admin'
     ),
     
 }
