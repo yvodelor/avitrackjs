@@ -1,114 +1,95 @@
 import { Router } from "express";
 import type { RequestHandler } from "express";
 
+
+
 import { authMiddleware } from "../middleware/authMiddleware";
 
 type RouteName =
-  | 'create'
-  | 'update'
-  | 'delete'
-  | 'getAll'
-  | 'getBy'
-  | 'search'
-  | 'by';
+  | "create"
+  | "update"
+  | "delete"
+  | "getAll"
+  | "getById"
+  | "getBy"
+  | "search";
 
+type Controller = {
+  getAll?: RequestHandler;
+  getById?: RequestHandler;
+  getByField?: RequestHandler;
+  search?: RequestHandler;
+  create?: RequestHandler;
+  update?: RequestHandler;
+  delete?: RequestHandler;
+};
 
 type Options = {
   protectedRoutes?: RouteName[];
   disabledRoutes?: RouteName[];
   upload?: RequestHandler;
   customRoutes?: (router: Router) => void;
-
-   publicAccess?: boolean;
+  publicAccess?: boolean;
 };
 
+const passThrough: RequestHandler = (_req, _res, next) => next();
 
-type Controller = {
-    getAll?:RequestHandler
-    getById?:RequestHandler
-    getByField?:RequestHandler
-    search?:RequestHandler
-    create?:RequestHandler
-    update?:RequestHandler
-    delete?:RequestHandler
+export const createCrudRoutes = <T extends { id: number }>(
+  controller: Controller,
+  options: Options = {}
+): Router => {
+  const router = Router();
 
-}
+  const {
+    protectedRoutes = [],
+    disabledRoutes = [],
+    upload = passThrough,
+    customRoutes,
+    publicAccess = false,
+  } = options;
 
+  const isEnabled = (route: RouteName) =>
+    !disabledRoutes.includes(route);
 
-
-export const createCrudRoutes = <T extends { id: number}>(
-    controller: Controller,
-    options: Options = {}
-) =>{
-    const router = Router()
-    const {protectedRoutes = [], disabledRoutes = []} = options
-
-        const noAuth: RequestHandler = (req, res, next) => {
-
-        req.queryContext = {
-            enableAccess: false
-        };
-
-        next();
-    };
-    
-    const guard = (route: string): RequestHandler => {
-        const isProtected = protectedRoutes?.includes(route as any) ?? false;
-        return isProtected ? authMiddleware : noAuth;
-    };
-
-    const isEnabled = (route: string) => !disabledRoutes.includes(route as any)
-
-      // Routes personnalisées
-    if(options.customRoutes){
-        options.customRoutes(router);
+  const guard = (route: RouteName): RequestHandler => {
+    if (protectedRoutes.includes(route)) {
+      return authMiddleware;
     }
 
+    // Si l'accès public n'est pas autorisé, exiger l'authentification.
+    return publicAccess ? passThrough : authMiddleware;
+  };
 
-    // Routes de lecture - publiques par default
-    if(isEnabled('search') && controller.search){
-        router.get('/search', guard('search'), controller.search)
-    }
+  // Routes spécifiques avant les routes génériques telles que /:id.
+  customRoutes?.(router);
 
-    if(isEnabled('by') && controller.getByField){
-        router.get('/by', guard('by'), controller.getByField)
-    }
+  if (isEnabled("search") && controller.search) {
+    router.get("/search", guard("search"), controller.search);
+  }
 
+  if (isEnabled("getBy") && controller.getByField) {
+    router.get("/by", guard("getBy"), controller.getByField);
+  }
 
-    if(isEnabled('getAll') && controller.getAll){
-        router.get('/', guard('getAll'), controller.getAll)
-    }
+  if (isEnabled("getAll") && controller.getAll) {
+    router.get("/", guard("getAll"), controller.getAll);
+  }
 
-    if (isEnabled('getById') && controller.getById) {
-    router.get('/:id', guard('getById'), controller.getById)
-}
+  if (isEnabled("getById") && controller.getById) {
+    router.get("/:id", guard("getById"), controller.getById);
+  }
 
-    if (isEnabled('create') && controller.create) {
-    router.post(
-        '/',
-        guard('create'),
-        options.upload ?? ((req,res,next)=>next()),
-        controller.create
-    )
-}
+  if (isEnabled("create") && controller.create) {
+    router.post("/", guard("create"), upload, controller.create);
+  }
 
-    if(isEnabled('update') && controller.update){
-    router.put(
-        '/:id',
-        guard('update'),
-        options.upload ?? ((req,res,next)=>next()),
-        controller.update
-    )
-}
+  if (isEnabled("update") && controller.update) {
+    router.put("/:id", guard("update"), upload, controller.update);
+  }
 
-    if(isEnabled('delete') && controller.delete){
-        router.delete('/:id', guard('delete'), controller.delete)
-    }
+  if (isEnabled("delete") && controller.delete) {
+    router.delete("/:id", guard("delete"), controller.delete);
+  }
 
-
-    return router
-}
-
-
-
-
+  return router;
+};
