@@ -3,7 +3,8 @@ import { createBaseService } from "./baseService";
 
 
 type Vaccination = {
-  id: number
+  id: number;
+  vaccin_id: number;
   building_id: string;
   date: Date;
   vaccins: string;
@@ -14,7 +15,7 @@ export const vaccinationService = {
   ...createBaseService<Vaccination>(
   pool,
   "vaccination",
-  ["id", "vaccins"],
+  ["id", "vaccins", "building_id", "vaccin_id"],
     {
     joins:[
           ` JOIN building  ON vaccination.building_id = building.id  `,

@@ -7,7 +7,8 @@ export type Support = {
   type: string
   subject: string
   description: string
-  status?: string
+  status?: string;
+  created_at: null
 
 };
 

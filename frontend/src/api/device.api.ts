@@ -5,7 +5,8 @@ export type Device = {
   building_id: string;
   code: string;
   status: string;
-  module_id:string
+  module_id:string;
+  last_see: string
 
 };
 

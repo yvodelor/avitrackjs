@@ -4,6 +4,7 @@ import { useNavigate, useParams } from "react-router-dom";
 
 
 import {type  Vaccination, vaccinationApi } from "@/api/vaccination.api";
+import {type  Vaccin, vaccinApi } from "@/api/vaccin.api";
 import {type  Building, buildingApi } from "@/api/building.api";
 import {type  Farm, farmApi } from "@/api/farm.api";
 import DashLayout from "@/layouts/DashLayout";
@@ -18,6 +19,8 @@ import Select from "@/components/form/Select"
 import TextArea from "@/components/form/input/TextArea"
 import Inputfield from "@/components/form/input/InputField";
 
+import { formatDateInput } from "@/utils/date";
+
 import axios from "axios"
 
 
@@ -28,6 +31,7 @@ export default function VaccinationCreate() {
 
   const [loading, setLoading] = useState(false);
   const [buildings, setBuildings] = useState<Building[]>([]);
+  const [vaccins, setVaccins] = useState<Vaccin[]>([]);
   const [farms, setFarms] = useState<Farm[]>([]);
   const [error, setError] = useState<string | null>(null);
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
@@ -37,6 +41,7 @@ export default function VaccinationCreate() {
 
   const[form, setForm] = useState<Omit<Vaccination, 'id'>>({
     building_id: '',
+    vaccin_id: 0,
     date: '',
     vaccins: '',
     remarque: '',
@@ -85,15 +90,39 @@ export default function VaccinationCreate() {
 
 
 
+
+  //Vaccin
+  const handleSelectVaccin = (value: string) => {
+    console.log("Selected value:", value);
+    setForm((prev) => ({
+      ...prev,
+      vaccin_id: Number(value)
+    }));   
+  };
+
+  useEffect(() => {
+    vaccinApi.getAll().then(data => {
+      console.log(data)
+      if(data !== null) setVaccins( data)
+    })
+  }, []);
+  const optionVaccin = vaccins.map(a => ({ value: a.id, label: a.name}));
+
+
+
  
   //Vaccination
   useEffect(() => {
-    if(isEdit){
-        vaccinationApi.getById(id).then(data => {
-          console.log(data)
-          if(data !== null) setForm( data)
-        })
-    }
+    if (!isEdit || !id) return;
+
+    vaccinationApi.getById(id).then((data) => {
+      if (data !== null) {
+        setForm({
+          ...data,
+          date: formatDateInput(data.date),
+        });
+      }
+    });
   }, [id, isEdit]);
 
  
@@ -102,15 +131,15 @@ export default function VaccinationCreate() {
     setLoading(true);
     const errors: Record<string, string> = {};
     if (!form.date.trim()) {
-      errors.date = "Le dtae est obligatoire";
+      errors.date = "Le date est obligatoire";
     }
-    if (!form.vaccins.trim()) {
-      errors.vaccins = " Le champ vaccin est obligatoire";
-    }
+ 
 
-    if (!form.building_id.trim() ) {
+    if (!form.building_id || String(form.building_id).trim() === "") {
       errors.building_id = "Le champ Batiment est obligatoire";
     }
+
+
 
 
     if (Object.keys(errors).length > 0) {
@@ -188,11 +217,11 @@ export default function VaccinationCreate() {
 
 
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-12">
           
           <div className="grid grid-cols-12 gap-4">
 
-            <div className="col-span-12 md:col-span-4">
+            <div className="col-span-12 md:col-span-6">
               <Label htmlFor="Building_id"> Ferme * </Label>
               <Select
 
@@ -210,13 +239,13 @@ export default function VaccinationCreate() {
               */}
             </div>
 
-            <div className="col-span-12 md:col-span-4">
+            <div className="col-span-12 md:col-span-6">
               <Label htmlFor="Building_id"> Batiment * </Label>
               <Select
-                name="Building_id"
+                name="building_id"
                 
                 options = {optionBuilding}
-                placeholder = "Select une categorie"
+                placeholder = "Select un le batiment"
                 onChange={handleSelectBuilding}
                 defaultValue= { isEdit ? String(form.building_id)  : ""}
               />
@@ -227,16 +256,31 @@ export default function VaccinationCreate() {
               )}
             </div>
 
-
+            <div className="col-span-12 md:col-span-6">
+              <Label htmlFor="vaccin_id"> Le type de vaccin * </Label>
+              <Select
+                name="vaccin_id"
+                
+                options = {optionVaccin}
+                placeholder = "Select une "
+                onChange={handleSelectVaccin}
+                defaultValue= { isEdit ? String(form.vaccin_id)  : ""}
+              />
+              {fieldErrors.vaccin_id && (
+                <small className="mt-1 text-sm text-red-500">
+                  {fieldErrors.vaccin_id}
+                </small>
+              )}
+            </div>
 
             {/* date */}
-            <div className="col-span-4">
-              <Label htmlFor="date">Date</Label>
+            <div className="col-span-6">
+              <Label htmlFor="date">Date réalisée</Label>
               <Inputfield
                 name="date"
                 type="date"
                 placeholder=""
-                value={form.date}
+                value={String(form.date)}
                 onChange={(e) => setForm({ ...form, date: e.target.value })}
               />
               {fieldErrors.date && (
@@ -249,7 +293,7 @@ export default function VaccinationCreate() {
    
 
             <div className="col-span-12 md:col-span-12">
-              <Label htmlFor="msg"> Vaccins à administrer</Label>
+              <Label htmlFor="msg"> Autres Vaccins à administrer</Label>
               <TextArea
                 name="vaccins"
                 placeholder = "Citez les Vaccins"

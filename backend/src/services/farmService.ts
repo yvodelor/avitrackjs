@@ -9,13 +9,14 @@ type Farm = {
     nom: string
 } 
 
-export const farmService = {
-    ...createBaseService<Farm>(
-        pool, 
-        'farms', 
-        ['id', 'name', 'pays_id'],
-        { field: "user_id"}, 
-        'admin'
-    ),
-    
-}
+
+
+
+export const farmService = createBaseService<Farm>(
+  pool,
+  "farms",
+  ["id", "nom", "pays_id", "ville_id", "user_id"],
+  { field: "user_id" },
+  "admin",
+
+);

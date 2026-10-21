@@ -2,7 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-//import {type  Farm } from "@/api/farm.api";
+import {type  Farm, farmApi } from "@/api/farm.api";
+import {type  Building, buildingApi } from "@/api/building.api";
 import {type  Device, deviceApi } from "@/api/device.api";
 
 import PageMeta from "@/components/common/PageMeta";
@@ -22,7 +23,24 @@ const DevicePage = () => {
   const [elts, setElts] = useState<Device[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
-//  const [farms, setFarms] = useState<Farm[]>([]);
+const [farms, setFarms] = useState<Farm[]>([]);
+const [buildings, setBuildings] = useState<Building[]>([]);
+
+// Building
+useEffect(() => {
+  buildingApi.getAll().then(data => {
+    if(data !== null) setBuildings( data)
+  })  
+}, []);
+
+// Vaccin
+useEffect(() => {
+  farmApi.getAll().then(data => {
+    if(data !== null) setFarms( data)
+  })  
+}, []);
+
+
 
 
   const  EltCols:  Column<Device>[] = [
@@ -36,10 +54,36 @@ const DevicePage = () => {
     },
 
     {
-      key: 'building_id',
-      header: 'Batiment',
+    key: 'building_id',
+    header: 'Ferme',
+    sortable: true,
+    render:(_value, row) => {
+      if (!row.building_id) return "-";
+      const  building = buildings.find( b => b.id == _value) 
+      if(building)  {
+        const  ferme = farms.find( b => b.id == building?.farm_id) 
+        return ferme?.name || '-'
+      }
+      
+    }
+  },
+
+  {
+    key: 'building_id',
+    header: 'Batiment',
+    sortable: true,
+    render:(_value, row) => {
+      if (!row.building_id) return "-";
+      const  building = buildings.find( b => b.id == _value) 
+     
+      return building?.name || '-'
+    }
+  },
+
+    {
+      key: 'last_see',
+      header: 'Dernier signe',
       sortable: true,
-    
     },
 
     {

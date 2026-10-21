@@ -35,9 +35,10 @@ export default function deviceCreate() {
 
   const[form, setForm] = useState<Omit<Device, 'id'>>({
     building_id: '',
+    last_see :'',
     code: '',
     status: '',
-    module_id: ''
+    module_id: "1"
  
   });
 
@@ -82,6 +83,19 @@ export default function deviceCreate() {
   const optionBuildings = buildings.map(a => ({ value: a.id, label: a.name }));
 
 
+  
+  // Satus
+  const handleSelectStatus = (value: string) => {
+    console.log("Selected value:", value);
+    setForm((prev) => ({
+      ...prev,
+      status: value
+    }));   
+  };
+  const optionStatus = [
+    { value: "inline", label: "En ligne"},
+    { value: "Off", label: "Desactivé"}
+  ]
 
 
 
@@ -125,7 +139,7 @@ export default function deviceCreate() {
         await deviceApi.create(form)
       }
 
-      navigate('/device')
+      navigate('/admin/devices')
     }catch (err) {
       console.error("Erreur :", err);
 
@@ -194,17 +208,6 @@ export default function deviceCreate() {
             <div className="grid grid-cols-12 gap-4">
 
               <div className="col-span-6 md:col-span-6">
-                <Label > Fermier  </Label>
-                <Select
-                  name="user_id"               
-                  options = {optionFarm}
-                  placeholder = "Select un pays"
-                  onChange={handleSelectFarm}
-                  defaultValue= { isEdit ? ''  : ""}
-                />
-              </div>
-
-              <div className="col-span-6 md:col-span-6">
                 <Label > Ferme  </Label>
                 <Select
                   name="ferme_id"               
@@ -230,6 +233,18 @@ export default function deviceCreate() {
                   </small>
                 )}
               </div>
+
+              <div className="col-span-12 md:col-span-6">
+                <Label htmlFor=""> Statut *  </Label>
+                <Select
+                  name="status"               
+                  options = {optionStatus}
+                  placeholder = "Select un statut"
+                  onChange={handleSelectStatus}
+                  defaultValue= { isEdit ? String(form.status)  : ""}
+                />
+              
+              </div>
              
               <div className="col-span-12 md:col-span-6">
                 <Label htmlFor="name">Code du Matériel *</Label>
@@ -246,23 +261,9 @@ export default function deviceCreate() {
                 )}
               </div>
 
-              {/* 
-              <div className="col-span-12 md:col-span-4">
-                <Label htmlFor="module_id"> Type module </Label>
-                <Select
-                  name="module_id"
-                  options = {optionModule}
-                  placeholder = "Select le type de module"
-                  onChange={handleSelectModule}
-                  defaultValue= { isEdit ? String(form.module_id)  : ""}
-                />
-                {fieldErrors.module_id && (
-                  <small className="mt-1 text-sm text-red-500">
-                    {fieldErrors.module_id}
-                  </small>
-                )}
-              </div>
-              */}
+              
+          
+              
 
 
             </div>

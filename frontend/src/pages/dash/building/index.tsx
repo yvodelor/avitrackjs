@@ -78,13 +78,21 @@ const  EltCols:  Column<Building>[] = [
     key: 'date_initial',
     header: 'Date',
     sortable: true,
-      render:(_value, _row) => {
-      const debut = new Date(_value)
-      const maintenant  = new Date()
-      debut.setHours(0,0,0,0)
-      maintenant.setHours(0,0,0,0)
-      const jr = Math.floor(maintenant.getTime() - debut.getTime()) / (1000 * 60 * 60 * 24 )
-      return  (jr > 0) ? jr: '-'
+    render:(_value, _row) => {
+     
+      if (!_value) return '';
+
+      const date = new Date(_value);
+
+      if (isNaN(date.getTime())) return String(_value);
+
+      return date.toLocaleDateString('fr-FR', {
+        day: '2-digit',
+        month: 'short',
+        year: 'numeric',
+      });
+      
+      
     }
 
   },

@@ -2,6 +2,7 @@ import { createCrudApi  } from "../api/crud.api";
 
 export type Vaccination = {
   id: string;
+  vaccin_id: number;
   building_id: string;
   date: string;
   vaccins: string;

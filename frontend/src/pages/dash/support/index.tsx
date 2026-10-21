@@ -16,7 +16,7 @@ import ComponentCard from "@/components/common/ComponentCard";
 
 import {Edit,  BookOpen} from 'lucide-react'
 
-
+import { formatDate } from '@/utils/date'
 
 
 const BuildingPage = () => {
@@ -45,6 +45,14 @@ const BuildingPage = () => {
 
 
 const  EltCols:  Column<Support>[] = [
+
+    {
+      key: 'created_at',
+      header: 'Date',
+      sortable: true,
+      render:(_value) =>formatDate(_value)
+       
+    },
  
   {
     key: 'id',

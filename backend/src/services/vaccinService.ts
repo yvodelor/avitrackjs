@@ -17,6 +17,6 @@ export const vaccinService = {
   ...createBaseService<Vaccin>(
   pool,
   "vaccin",
-  ["id"]
+  ["id", 'categorie_id']
  
 )}

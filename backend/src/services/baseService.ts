@@ -4,7 +4,7 @@ import {AccessConfig, QueryContext} from "../types/access"
 
 type BaseEntity = {id : number}
 
-//const ALLOWED_FIELDS = ['id', 'nom']   //Pour Eviter les injection
+
 
 export const createBaseService = <T extends BaseEntity>(
     pool: Pool,

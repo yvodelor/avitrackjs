@@ -37,6 +37,7 @@ export default function BuildingCreate() {
     building_id: '',
     subject: '',
     description: '',
+    created_at: null
 
   });
 

@@ -13,8 +13,14 @@ import { type Farm, farmApi } from "@/api/farm.api";
 import { type Device, deviceApi } from "@/api/device.api";
 import {type Souche,  soucheApi } from "@/api/souche.api";
 
+import { type Vaccin, vaccinApi } from "@/api/vaccin.api";
+import { type Vaccination, vaccinationApi } from "@/api/vaccination.api";
+import { type Categorie, categorieApi } from "@/api/categorie.api";
 import Select from "@/components/form/Select";
 import Label from "@/components/form/Label";
+
+import { dashboardCookie } from "@/utils/dashboardCookie";
+import CalendrierVaccinal from "@/components/CalendrierVaccinal";
 
 /*
 |--------------------------------------------------------------------------
@@ -137,6 +143,10 @@ export default function Dashboard() {
   const [devices, setDevices] = useState<Device[]>([]);
   const [age, setAge] = useState<String>('');
   const [souche, setSouche] = useState<Souche>();
+  const [vaccins, setVaccin] = useState<Vaccin[]>([]);
+  const [vaccinations, setVaccination] = useState<Vaccination[]>([]);
+  const [building, setBuilding] = useState<Building>();
+  const [categorie, setCategorie] = useState<Categorie>();
 
 
   /*
@@ -192,27 +202,227 @@ export default function Dashboard() {
     a => a.type_mesure_id === TYPE_MESURE.AMMONIAC
   );
 
+  const loadCalendrierData = async (batiment: Building) => {
+    setBuilding(batiment);
 
+    // 1. Calculer l'âge du bâtiment
+    if (batiment.date_initial) {
+      const debut = new Date(batiment.date_initial);
+      const maintenant = new Date();
+
+      debut.setHours(0, 0, 0, 0);
+      maintenant.setHours(0, 0, 0, 0);
+
+      const ageJours = Math.floor(
+        (maintenant.getTime() - debut.getTime()) /
+          (1000 * 60 * 60 * 24)
+      );
+
+      setAge(ageJours >= 0 ? String(ageJours) : "");
+    } else {
+      setAge("");
+    }
+
+    // Réinitialiser les anciennes données
+    setSouche(undefined);
+    setCategorie(undefined);
+    setVaccin([]);
+    setVaccination([]);
+
+    try {
+      // 2. Charger les vaccinations réalisées du bâtiment
+      const vaccinationsData = await vaccinationApi.getByField(
+        "building_id",
+        Number(batiment.id)
+      );
+
+      setVaccination(vaccinationsData ?? []);
+
+      // 3. Charger la souche du bâtiment
+      if (!batiment.souche_id) return;
+
+      const soucheData = await soucheApi.getById(
+        batiment.souche_id
+      );
+
+      if (!soucheData) return;
+
+      setSouche(soucheData);
+
+      // 4. Charger la catégorie de la souche
+      if (!soucheData.categorie_id) return;
+
+      const categorieData = await categorieApi.getById(
+        soucheData.categorie_id
+      );
+
+      setCategorie(categorieData ?? undefined);
+
+      // 5. Charger le programme vaccinal de cette catégorie
+      const vaccinsData = await vaccinApi.getByField(
+        "categorie_id",
+        Number(soucheData.categorie_id)
+      );
+
+      setVaccin(vaccinsData ?? []);
+    } catch (error) {
+      console.error(
+        "Erreur de chargement du calendrier vaccinal :",
+        error
+      );
+    }
+  };
 
   useEffect(() => {
-    const loadFarms = async () => {
-      try {
-        const data = await farmApi.getAll();
+    let cancelled = false;
 
-        if (data) {
-          setFarms(data);
-        }
-      } catch (error) {
-        console.error(
-          "Erreur chargement fermes :",
-          error
+    const restoreDashboard = async () => {
+      try {
+        // 1. Charger les fermes
+        const farmsData = await farmApi.getAll();
+
+        if (cancelled) return;
+
+        setFarms(farmsData ?? []);
+
+        const saved = dashboardCookie.get();
+
+        if (!saved?.farmId) return;
+
+        // Vérifier que la ferme existe toujours
+        const farmExists = farmsData?.some(
+          (farm) => String(farm.id) === saved.farmId
         );
+
+        if (!farmExists) {
+          dashboardCookie.clear();
+          return;
+        }
+
+        setSelectedFarm(saved.farmId);
+
+        // Pas de bâtiment enregistré
+        if (!saved.buildingId) return;
+
+        // 2. Charger les bâtiments de la ferme
+        const buildingsData = await buildingApi.getByField(
+          "farm_id",
+          saved.farmId
+        );
+
+        if (cancelled) return;
+
+        setBuildings(buildingsData ?? []);
+
+        const building = buildingsData?.find(
+          (item) => String(item.id) === saved.buildingId
+        );
+
+        if (!building) {
+          dashboardCookie.save({
+            farmId: saved.farmId,
+            buildingId: "",
+            deviceCode: "",
+          });
+          return;
+        }
+
+        setSelectedBuilding(saved.buildingId);
+
+        // 3. Restaurer l'âge et la souche du bâtiment
+        if (building.date_initial) {
+          const debut = new Date(building.date_initial);
+          const maintenant = new Date();
+
+          debut.setHours(0, 0, 0, 0);
+          maintenant.setHours(0, 0, 0, 0);
+
+          const ageJours = Math.floor(
+            (maintenant.getTime() - debut.getTime()) /
+              (1000 * 60 * 60 * 24)
+          );
+
+          setAge(ageJours >= 0 ? String(ageJours) : "");
+        } else {
+          setAge("");
+        }
+
+
+
+
+        // Charger toutes les données du calendrier
+        await loadCalendrierData(building);
+
+        if (building.souche_id) {
+          const soucheData = await soucheApi.getById(
+            building.souche_id
+          );
+
+          if (cancelled) return;
+
+          setSouche(soucheData ?? undefined);
+        } else {
+          setSouche(undefined);
+        }
+
+        // 4. Charger les devices du bâtiment
+        const devicesData = await deviceApi.getByField(
+          "building_id",
+          saved.buildingId
+        );
+
+        if (cancelled) return;
+
+        setDevices(devicesData ?? []);
+
+        const deviceExists = devicesData?.some(
+          (device) => String(device.code) === saved.deviceCode
+        );
+
+        if (!saved.deviceCode || !deviceExists) {
+          if (saved.deviceCode) {
+            dashboardCookie.save({
+              farmId: saved.farmId,
+              buildingId: saved.buildingId,
+              deviceCode: "",
+            });
+          }
+          return;
+        }
+
+        // 5. Restaurer le device
+        setSelectedDevice(saved.deviceCode);
+      } catch (error) {
+        if (!cancelled) {
+          console.error(
+            "Erreur de restauration du dashboard :",
+            error
+          );
+        }
       }
     };
 
-    loadFarms();
+    void restoreDashboard();
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
+
+  useEffect(() => {
+  if (!selectedDevice) {
+    setHistory([]);
+    setTemperature(undefined);
+    setHumidity(undefined);
+    setAmmoniac(undefined);
+    setPoids(undefined);
+    setAlerts([]);
+    return;
+  }
+
+  void loadHistory();
+}, [selectedDevice]);
   /*
   |--------------------------------------------------------------------------
   | Options Select
@@ -265,6 +475,12 @@ export default function Dashboard() {
 
     setSelectedFarm(value);
 
+    dashboardCookie.save({
+      farmId: value,
+      buildingId: "",
+      deviceCode: "",
+    });
+
     /*
      * Reset bâtiment + device
      */
@@ -308,82 +524,56 @@ export default function Dashboard() {
   |--------------------------------------------------------------------------
   */
 
-  const changeBuilding = async (value: string) => {
-    console.log( "Selected building:",  value );
-    setSelectedBuilding(value);
+const changeBuilding = async (value: string) => {
+  setSelectedBuilding(value);
 
-    const batiment = buildings.find(building =>(building.id === value) || null)
-    console.log('batiment', batiment?.date_initial)
+  dashboardCookie.save({
+    farmId: selectedFarm,
+    buildingId: value,
+    deviceCode: "",
+  });
 
-    
-    const date_initial  = batiment?.date_initial;
-    const schId = batiment?.souche_id
+  setSelectedDevice("");
+  setDevices([]);
+  setHistory([]);
 
-    if(schId) {
-      
-      try {
-        const data = await soucheApi.getById(schId) 
-        
-        if (data) {
-          setSouche(data);
-        }
-      } catch (error) {
-        console.error(
-          "Erreur chargement bâtiments :",
-          error
-        );
-      }
-    }
-    
-      
-    if(date_initial){
-      const debut = new Date(date_initial)
-      const maintenant  = new Date()
-      debut.setHours(0,0,0,0)
-      maintenant.setHours(0,0,0,0)
-      const age = Math.floor(maintenant.getTime() - debut.getTime()) / (1000 * 60 * 60 * 24 )
+  setTemperature(undefined);
+  setHumidity(undefined);
+  setAmmoniac(undefined);
+  setPoids(undefined);
+  setAlerts([]);
 
-      if (age < 0) return;
-      setAge(String(age))
-    }
-      
+  if (!value) {
+    setBuilding(undefined);
+    setSouche(undefined);
+    setCategorie(undefined);
+    setVaccin([]);
+    setVaccination([]);
+    setAge("");
+    return;
+  }
 
-    /*
-     * Reset device
-     */
+  const batiment = buildings.find(
+    (item) => String(item.id) === value
+  );
 
-    setSelectedDevice("");
-    setDevices([]);
-    setHistory([]);
+  if (!batiment) return;
 
-    setTemperature(undefined);
-    setHumidity(undefined);
-    setAmmoniac(undefined);
-    setPoids(undefined);
+  // Charger toutes les données du calendrier
+  await loadCalendrierData(batiment);
 
-    if (!value) {
-      return;
-    }
-     
+  // Charger les appareils du bâtiment
+  try {
+    const devicesData = await deviceApi.getByField(
+      "building_id",
+      value
+    );
 
-
-    try {
-      const data = await deviceApi.getByField(
-        "building_id",
-        value
-      );
-
-      if (data) {
-        setDevices(data);
-      }
-    } catch (error) {
-      console.error(
-        "Erreur chargement devices :",
-        error
-      );
-    }
-  };
-
+    setDevices(devicesData ?? []);
+  } catch (error) {
+    console.error("Erreur chargement devices :", error);
+  }
+};
   /*
   |--------------------------------------------------------------------------
   | Changement de device
@@ -394,6 +584,12 @@ export default function Dashboard() {
     console.log(  "Selected device:", value  );
 
     setSelectedDevice(value);
+
+    dashboardCookie.save({
+      farmId: selectedFarm,
+      buildingId: selectedBuilding,
+      deviceCode: value,
+    });
 
     /*
      * Reset anciennes valeurs
@@ -1213,10 +1409,16 @@ export default function Dashboard() {
 
 
 
+<CalendrierVaccinal
+  programmeVaccins={vaccins}
+  vaccinationsRealisees={vaccinations}
+  dateInitial={building?.date_initial ?? ""}
+  nomBatiment={building?.name ?? ""}
+  nomCategorie={categorie?.name ?? ""}
+  nomSouche={souche?.name}
+/>
 
-
-
-    
+   
 
 
         {/* ==================================================

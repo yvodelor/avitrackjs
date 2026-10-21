@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 
 import {type  Building, buildingApi } from "@/api/building.api";
 import {type  Vaccination, vaccinationApi } from "@/api/vaccination.api";
+import {type  Vaccin, vaccinApi } from "@/api/vaccin.api";
 
 import PageMeta from "@/components/common/PageMeta";
 import PageBreadcrumb from "@/components/common/PageBreadCrumb";
@@ -15,20 +16,29 @@ import ComponentCard from "@/components/common/ComponentCard";
 
 import {Edit,  BookOpen} from 'lucide-react'
 
+import { formatDate } from "@/utils/date";
 
 
 const VaccinationPage = () => {
   const [elts, setElts] = useState<Vaccination[]>([]);
-  const [buildings, setBuildings] = useState<Building[]>([]);
+  const [buildings, setBuildings] = useState<Building[]>([]);  
+  const [vaccinListe, setVaccins] = useState<Vaccin[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string>("");
 
 
 
-// 
+// Building
 useEffect(() => {
   buildingApi.getAll().then(data => {
     if(data !== null) setBuildings( data)
+  })  
+}, []);
+
+// Vaccin
+useEffect(() => {
+  vaccinApi.getAll().then(data => {
+    if(data !== null) setVaccins( data)
   })  
 }, []);
 
@@ -39,9 +49,8 @@ useEffect(() => {
       key: 'date',
       header: 'Date',
       sortable: true,
-      render:(_value) => {
-        return _value
-      }
+      render:(_value) =>formatDate(_value)
+       
     },
 
     {
@@ -49,14 +58,25 @@ useEffect(() => {
       header: 'Bâtiment',
       sortable: true,  
       render:(_value, row) => {
-      if (!row.building_id) return "-";
-      const building = buildings.find( b => b.id == row.building_id) 
-      return building?.name|| '-'
-    }
+        if (!row.building_id) return "-";
+        const building = buildings.find( b => b.id == row.building_id) 
+        return building?.name|| '-'
+      }
     },
     {
+      key: 'vaccin_id',
+      header: 'Vaccin',
+      sortable: true,  
+      render:(_value, row) => {
+        if (!row.vaccin_id) return "-";
+        const vac = vaccinListe.find( b => b.id == String(row.vaccin_id)) 
+        return vac?.name|| '-'
+      }
+    },
+
+    {
       key: 'vaccins',
-      header: 'Vaccins',    
+      header: 'Autres vaccins',    
     },
   
   ];
